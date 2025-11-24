@@ -8,8 +8,12 @@ export default function DashboardLayout({
 }) {
   return (
     <SidebarProvider>
-      <AppSidebar />
-      <main className="w-full h-full">{children}</main>
+      <div className="relative flex h-screen w-screen overflow-hidden bg-gray-100">
+        <main className="absolute inset-0 z-0 w-full h-full">{children}</main>
+        <div className="z-10 h-full">
+          <AppSidebar />
+        </div>
+      </div>
     </SidebarProvider>
   );
 }

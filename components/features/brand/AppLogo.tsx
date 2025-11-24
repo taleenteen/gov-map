@@ -1,14 +1,12 @@
-import React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { cn } from "@/lib/utils"; // ถ้าคุณมี util นี้ (มาตรฐาน shadcn) ถ้าไม่มีให้ลบ cn ออกแล้วใส่ string ธรรมดา
-// Import รูปที่คุณมี
+import { cn } from "@/lib/utils";
 import logoMark from "@/assets/brand/logo-mark.png";
 
 interface AppLogoProps {
   className?: string;
-  variant?: "default" | "icon"; // default = มีรูป+ชื่อ, icon = มีแค่รูป
-  isCollapsed?: boolean; // รับค่าจาก Sidebar ว่ายุบอยู่ไหม
+  variant?: "default" | "icon";
+  isCollapsed?: boolean;
 }
 
 export const AppLogo = ({
@@ -16,7 +14,6 @@ export const AppLogo = ({
   variant = "default",
   isCollapsed = false,
 }: AppLogoProps) => {
-  // ชื่อหน่วยงาน (เปลี่ยนได้ตามจริง)
   const title = "เทศบาลตำบลหลักเมือง";
   const subtitle = "จังหวัด ราชบุรี";
 
@@ -28,19 +25,17 @@ export const AppLogo = ({
         className
       )}
     >
-      {/* ส่วนรูปโลโก้ */}
       <div className="relative shrink-0">
         <Image
           src={logoMark}
           alt="Logo"
-          width={40} // ขนาดตามดีไซน์ (ประมาณ 40px)
+          width={40}
           height={40}
           className="rounded-full object-contain"
-          priority // โหลดด่วนเพราะอยู่ส่วนบนสุด
+          priority
         />
       </div>
 
-      {/* ส่วนข้อความ (จะซ่อนเมื่อ isCollapsed เป็น true) */}
       <div
         className={cn(
           "flex flex-col transition-all duration-300",

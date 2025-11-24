@@ -1,14 +1,23 @@
 "use client";
-import {
-  Calendar,
-  Home,
-  Inbox, // ใช้แทนงานบริการในตัวอย่างเดิม
-  Search,
-  Settings,
-  Briefcase, // ไอคอนกระเป๋าสำหรับ "งานบริการ"
-  ChevronRight, // ไอคอนลูกศร
-  LayoutDashboard, // ไอคอน Dashboard
-} from "lucide-react";
+import { LucideIcon } from "lucide-react";
+
+export interface NavItem {
+  title: string;
+  url: string;
+  icon: LucideIcon;
+  isActive?: boolean;
+  items?: {
+    // สำหรับ Submenu
+    title: string;
+    url: string;
+  }[];
+}
+
+export interface NavGroup {
+  label?: string; // ชื่อกลุ่ม (ถ้ามี)
+  items: NavItem[];
+}
+
 import {
   Sidebar,
   SidebarContent,
@@ -19,138 +28,205 @@ import {
   SidebarMenuItem,
   SidebarTrigger,
   SidebarHeader,
+  SidebarFooter, // ✅ เพิ่ม Footer
   useSidebar,
-  SidebarMenuSub, // ✅ เพิ่มสำหรับเมนูย่อย
-  SidebarMenuSubItem, // ✅ เพิ่มสำหรับเมนูย่อย
-  SidebarMenuSubButton, // ✅ เพิ่มสำหรับเมนูย่อย
+  SidebarMenuSub,
+  SidebarMenuSubItem,
+  SidebarMenuSubButton,
+  SidebarSeparator, // ✅ ใช้ Separator ของ Sidebar เอง
 } from "@/components/ui/sidebar";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from "@/components/ui/collapsible"; // ✅ Import Collapsible
+} from "@/components/ui/collapsible";
 import { AppLogo } from "@/components/features/brand/AppLogo";
 import { cn } from "@/lib/utils";
+import { ChevronRight, LogOut, User } from "lucide-react";
 
-// เมนูทั่วไป (ล่างสุด)
-const mainItems = [
-  { title: "หน้าหลัก", url: "#", icon: Home },
-  { title: "แดชบอร์ด", url: "#", icon: LayoutDashboard }, // เปลี่ยนไอคอนให้ตรงภาพ
-  { title: "ตั้งค่า", url: "#", icon: Settings },
-  { title: "ช่วยเหลือ", url: "#", icon: Calendar }, // ในภาพเป็นเครื่องหมายตกใจ แต่ใช้ Calendar ตามเดิมไปก่อน
+// --- รับ Props เข้ามาแทนการ Hardcode ---
+interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
+  extraGroups?: NavGroup[]; // เมนูเสริมที่จะต่อท้าย (เช่น แดชบอร์ด)
+}
+
+// เมนูหลักที่ "ต้องมีทุกหน้า" (Core Navigation)
+import {
+  Home,
+  LayoutDashboard,
+  Settings,
+  Calendar,
+  Briefcase,
+} from "lucide-react";
+import React from "react";
+const coreGroups: NavGroup[] = [
+  {
+    items: [
+      {
+        title: "งานบริการ",
+        url: "#",
+        icon: Briefcase,
+        items: [
+          { title: "ระบบบริหารจัดการแผนที่ภาษี", url: "#" },
+          { title: "ระบบตรวจสอบปริมาณน้ำ", url: "#" },
+          { title: "ระบบความปลอดภัย", url: "#" },
+        ],
+      },
+    ],
+  },
+  {
+    items: [
+      { title: "หน้าหลัก", url: "/", icon: Home },
+      { title: "แดชบอร์ด", url: "/dashboard", icon: LayoutDashboard },
+      { title: "ตั้งค่า", url: "/settings", icon: Settings },
+      { title: "ช่วยเหลือ", url: "/help", icon: Calendar },
+    ],
+  },
 ];
 
-// เมนูงานบริการ (ที่มีลูกศร)
-const serviceItem = {
-  title: "งานบริการ",
-  icon: Briefcase, // รูปกระเป๋า
-  items: [
-    { title: "แจ้งเรื่องร้องเรียน", url: "#" },
-    { title: "ชำระภาษีออนไลน์", url: "#" },
-    { title: "ขออนุญาตก่อสร้าง", url: "#" },
-  ],
-};
-
-export function AppSidebar() {
+export function AppSidebar({ extraGroups = [], ...props }: AppSidebarProps) {
   const { open } = useSidebar();
+
+  // รวมกลุ่มเมนู: Core + Extra
+  const allGroups = [...coreGroups, ...extraGroups];
 
   return (
     <Sidebar
       collapsible="icon"
-      className="border-none rounded-r-3xl bg-white"
-      style={{ "--sidebar-width-icon": "5rem" } as React.CSSProperties}
+      className="border-none rounded-r-3xl bg-white h-full shadow-2xl"
+      {...props}
     >
       <SidebarTrigger className="absolute -right-3 top-6 z-50 hidden h-8 w-8 rounded-full bg-white shadow-md md:flex items-center justify-center" />
 
+      {/* --- HEADER --- */}
       <SidebarHeader className="p-4 pb-0 h-[4.5rem] justify-center">
         <AppLogo isCollapsed={!open} />
       </SidebarHeader>
 
-      <SidebarContent className="mt-4">
-        <SidebarGroup>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {/* ========================================= */}
-              {/* 1️⃣ ส่วนเมนูงานบริการ (Collapsible) */}
-              {/* ========================================= */}
-              <Collapsible defaultOpen className="group/collapsible">
-                <SidebarMenuItem
-                  className={cn(!open ? "flex justify-center" : "")}
-                >
-                  <CollapsibleTrigger asChild>
-                    <SidebarMenuButton
-                      className={cn(
-                        "py-6 transition-all duration-200 group-data-[state=open]/collapsible:font-bold", // ถ้าเปิดอยู่ให้ตัวหนา
-                        !open ? "justify-center" : "justify-start"
-                      )}
-                    >
-                      <serviceItem.icon className="!w-6 !h-6" />
-
-                      {/* แสดงข้อความและลูกศรเฉพาะตอน Sidebar กางออก */}
-                      {open && (
-                        <>
-                          <span className="text-base ml-2">
-                            {serviceItem.title}
-                          </span>
-                          <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
-                        </>
-                      )}
-                    </SidebarMenuButton>
-                  </CollapsibleTrigger>
-
-                  {/* เมนูย่อย (Sub Menu) */}
-                  <CollapsibleContent>
-                    {open && ( // ซ่อนเมนูย่อยถ้า Sidebar ปิดอยู่
-                      <SidebarMenuSub>
-                        {serviceItem.items.map((subItem) => (
-                          <SidebarMenuSubItem key={subItem.title}>
-                            <SidebarMenuSubButton asChild>
-                              <a href={subItem.url}>
-                                <span>{subItem.title}</span>
-                              </a>
-                            </SidebarMenuSubButton>
-                          </SidebarMenuSubItem>
-                        ))}
-                      </SidebarMenuSub>
+      {/* --- CONTENT --- */}
+      <SidebarContent className="mt-4 scrollbar-none">
+        {" "}
+        {/* scrollbar-none เพื่อความสวยงาม */}
+        {allGroups.map((group, index) => (
+          <SidebarGroup key={index}>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {group.items.map((item) => (
+                  <React.Fragment key={item.title}>
+                    {/* เช็คว่าเป็น Collapsible หรือ Link ธรรมดา */}
+                    {item.items ? (
+                      // 🟢 กรณีมีเมนูย่อย (Collapsible)
+                      <Collapsible defaultOpen className="group/collapsible">
+                        <SidebarMenuItem
+                          className={cn(!open ? "flex justify-center" : "")}
+                        >
+                          <CollapsibleTrigger asChild>
+                            <SidebarMenuButton
+                              tooltip={item.title}
+                              className={cn(
+                                "py-6 transition-all duration-200 group-data-[state=open]/collapsible:font-bold",
+                                !open ? "justify-center" : "justify-start"
+                              )}
+                            >
+                              <item.icon className="!w-6 !h-6 shrink-0" />
+                              {open && (
+                                <>
+                                  <span className="text-base ml-2 truncate">
+                                    {item.title}
+                                  </span>
+                                  <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                                </>
+                              )}
+                            </SidebarMenuButton>
+                          </CollapsibleTrigger>
+                          <CollapsibleContent>
+                            {open && (
+                              <SidebarMenuSub className="ml-0 border-l-0 pl-0">
+                                <div className="border-l border-gray-200 ml-6 pl-4 space-y-1 mt-1">
+                                  {item.items.map((sub) => (
+                                    <SidebarMenuSubItem key={sub.title}>
+                                      <SidebarMenuSubButton
+                                        asChild
+                                        className="h-auto py-2 text-sm text-gray-600"
+                                      >
+                                        <a href={sub.url}>
+                                          <span>{sub.title}</span>
+                                        </a>
+                                      </SidebarMenuSubButton>
+                                    </SidebarMenuSubItem>
+                                  ))}
+                                </div>
+                              </SidebarMenuSub>
+                            )}
+                          </CollapsibleContent>
+                        </SidebarMenuItem>
+                      </Collapsible>
+                    ) : (
+                      // 🔵 กรณีเมนูธรรมดา
+                      <SidebarMenuItem
+                        className={cn(!open ? "flex justify-center" : "")}
+                      >
+                        <SidebarMenuButton
+                          asChild
+                          tooltip={item.title}
+                          className={cn(
+                            "py-6 transition-all duration-200",
+                            !open ? "justify-center" : "justify-start"
+                          )}
+                        >
+                          <a href={item.url}>
+                            <item.icon className="!w-6 !h-6 shrink-0" />
+                            {open && (
+                              <span className="text-base ml-2 truncate">
+                                {item.title}
+                              </span>
+                            )}
+                          </a>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
                     )}
-                  </CollapsibleContent>
-                </SidebarMenuItem>
-              </Collapsible>
+                  </React.Fragment>
+                ))}
+              </SidebarMenu>
+            </SidebarGroupContent>
 
-              {/* ========================================= */}
-              {/* 2️⃣ เส้นขีดคั่น (Separator) */}
-              {/* ========================================= */}
-              <div className="my-2 mx-4 h-[1px] bg-gray-300" />
-
-              {/* ========================================= */}
-              {/* 3️⃣ ส่วนเมนูทั่วไป (Loop) */}
-              {/* ========================================= */}
-              {mainItems.map((item) => (
-                <SidebarMenuItem
-                  key={item.title}
-                  className={cn(!open ? "flex justify-center" : "gap-2")}
-                >
-                  <SidebarMenuButton
-                    asChild
-                    className={cn(
-                      "py-6 transition-all duration-200",
-                      !open ? "flex justify-center" : "flex justify-start"
-                    )}
-                  >
-                    <a href={item.url}>
-                      <item.icon className="!w-6 !h-6" />
-                      {/* ซ่อนข้อความเมื่อปิด Sidebar */}
-                      {open && (
-                        <span className="text-base ml-2">{item.title}</span>
-                      )}
-                    </a>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+            {/* ใส่เส้นคั่นระหว่างกลุ่ม (ถ้าไม่ใช่กลุ่มสุดท้าย) */}
+            {index < allGroups.length - 1 && (
+              <div className="my-2 mx-4 h-[1px] bg-gray-100" />
+            )}
+          </SidebarGroup>
+        ))}
       </SidebarContent>
+
+      {/* --- FOOTER (User Profile) --- */}
+      <SidebarFooter className="p-4 border-t border-gray-100 bg-gray-50/50 rounded-br-3xl">
+        <div
+          className={cn("flex items-center gap-3", !open && "justify-center")}
+        >
+          <div className="h-10 w-10 rounded-full bg-yellow-500 flex items-center justify-center overflow-hidden shrink-0 border-2 border-white shadow-sm">
+            {/* ใส่ Image จริงตรงนี้ */}
+            <img
+              src="https://github.com/shadcn.png"
+              alt="user"
+              className="h-full w-full object-cover"
+            />
+          </div>
+
+          {open && (
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-bold text-gray-900 truncate">
+                Full Name
+              </p>
+              <p className="text-xs text-gray-500 truncate">เจ้าหน้าที่</p>
+            </div>
+          )}
+
+          {open && (
+            <button className="text-red-500 hover:bg-red-50 p-2 rounded-full transition-colors">
+              <LogOut size={18} />
+            </button>
+          )}
+        </div>
+      </SidebarFooter>
     </Sidebar>
   );
 }

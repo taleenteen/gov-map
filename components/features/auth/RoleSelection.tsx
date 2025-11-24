@@ -19,9 +19,7 @@ export const RoleSelection = () => {
     <div className="flex flex-col items-center justify-center w-full max-w-md p-8 space-y-8 bg-white rounded-2xl shadow-xl border border-gray-100">
       <div className="flex flex-col items-center space-y-2">
         <AppLogo variant="full" className="w-48" />
-        <p className="text-gray-500 text-sm">
-          ระบบบริหารจัดการเมืองอัจฉริยะ (Demo)
-        </p>
+        <p className="text-gray-500 text-sm">(Demo)</p>
       </div>
 
       <div className="w-full space-y-4">
@@ -94,10 +92,6 @@ export const RoleSelection = () => {
             →
           </div>
         </button>
-      </div>
-
-      <div className="text-xs text-gray-400 text-center mt-6">
-        Smart City Platform v0.1.0
       </div>
     </div>
   );
