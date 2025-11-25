@@ -40,6 +40,12 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { TooltipArrow } from "@radix-ui/react-tooltip";
 import { AppLogo } from "@/components/features/brand/AppLogo";
 import { cn } from "@/lib/utils";
 import { ChevronRight, LogOut, User } from "lucide-react";
@@ -56,6 +62,7 @@ import {
   Settings,
   Calendar,
   Briefcase,
+  Info,
 } from "lucide-react";
 import React from "react";
 const coreGroups: NavGroup[] = [
@@ -78,7 +85,7 @@ const coreGroups: NavGroup[] = [
       { title: "หน้าหลัก", url: "/", icon: Home },
       { title: "แดชบอร์ด", url: "/dashboard", icon: LayoutDashboard },
       { title: "ตั้งค่า", url: "/settings", icon: Settings },
-      { title: "ช่วยเหลือ", url: "/help", icon: Calendar },
+      { title: "ช่วยเหลือ", url: "/help", icon: Info },
     ],
   },
 ];
@@ -120,33 +127,50 @@ export function AppSidebar({ extraGroups = [], ...props }: AppSidebarProps) {
                           className={cn(!open ? "flex justify-center" : "")}
                         >
                           <CollapsibleTrigger asChild>
-                            <SidebarMenuButton
-                              tooltip={item.title}
-                              className={cn(
-                                "py-6 transition-all duration-200 group-data-[state=open]/collapsible:font-bold",
-                                !open ? "justify-center" : "justify-start"
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <SidebarMenuButton
+                                  // ❌ ลบ prop tooltip ทิ้งไปเลย
+                                  className={cn(
+                                    "py-6 transition-all duration-200 hover:bg-btn-hover group-data-[state=open]/collapsible:font-bold group-data-[collapsible=icon]:size-12! group-data-[collapsible=icon]:p-3!",
+                                    !open ? "justify-center" : "justify-start"
+                                  )}
+                                >
+                                  <item.icon className="!w-6 !h-6 shrink-0" />
+                                  {open && (
+                                    <>
+                                      <span className="text-base ml-2 truncate">
+                                        {item.title}
+                                      </span>
+                                      <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                                    </>
+                                  )}
+                                </SidebarMenuButton>
+                              </TooltipTrigger>
+
+                              {/* 2. Custom Tooltip Content & Arrow ตรงนี้ */}
+                              {/* แสดงเฉพาะตอนปิด Sidebar (!open) เพื่อไม่ให้รก */}
+                              {!open && (
+                                <TooltipContent
+                                  side="right"
+                                  className="bg-btn-hover text-white border-none"
+                                >
+                                  {item.title}
+                                  {/* ✅ ใส่ Arrow และเติมสีให้เหมือน background */}
+                                  <TooltipArrow className="fill-btn-hover" />
+                                </TooltipContent>
                               )}
-                            >
-                              <item.icon className="!w-6 !h-6 shrink-0" />
-                              {open && (
-                                <>
-                                  <span className="text-base ml-2 truncate">
-                                    {item.title}
-                                  </span>
-                                  <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
-                                </>
-                              )}
-                            </SidebarMenuButton>
+                            </Tooltip>
                           </CollapsibleTrigger>
                           <CollapsibleContent>
                             {open && (
-                              <SidebarMenuSub className="ml-0 border-l-0 pl-0">
-                                <div className="border-l border-gray-200 ml-6 pl-4 space-y-1 mt-1">
+                              <SidebarMenuSub className="ml-0 border-l-0 pl-0 ">
+                                <div className="border-gray-200 ml-6 pl-4 space-y-1 mt-1">
                                   {item.items.map((sub) => (
                                     <SidebarMenuSubItem key={sub.title}>
                                       <SidebarMenuSubButton
                                         asChild
-                                        className="h-auto py-2 text-sm text-gray-600"
+                                        className="h-auto py-2 text-sm text-gray-600 hover:bg-btn-hover"
                                       >
                                         <a href={sub.url}>
                                           <span>{sub.title}</span>
@@ -165,23 +189,39 @@ export function AppSidebar({ extraGroups = [], ...props }: AppSidebarProps) {
                       <SidebarMenuItem
                         className={cn(!open ? "flex justify-center" : "")}
                       >
-                        <SidebarMenuButton
-                          asChild
-                          tooltip={item.title}
-                          className={cn(
-                            "py-6 transition-all duration-200",
-                            !open ? "justify-center" : "justify-start"
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <SidebarMenuButton
+                              asChild
+                              // ❌ ลบ prop tooltip ทิ้งไปเลย
+                              className={cn(
+                                "py-6 transition-all duration-200 hover:bg-btn-hover group-data-[collapsible=icon]:size-12! group-data-[collapsible=icon]:p-3!",
+                                !open ? "justify-center" : "justify-start"
+                              )}
+                            >
+                              <a href={item.url}>
+                                <item.icon className="!w-6 !h-6 shrink-0" />
+                                {open && (
+                                  <span className="text-base ml-2 truncate">
+                                    {item.title}
+                                  </span>
+                                )}
+                              </a>
+                            </SidebarMenuButton>
+                          </TooltipTrigger>
+
+                          {/* 2. Custom Tooltip Content & Arrow ตรงนี้ */}
+                          {!open && (
+                            <TooltipContent
+                              side="right"
+                              className="bg-btn-hover text-white border-none"
+                            >
+                              {item.title}
+                              {/* ✅ ใส่ Arrow และเติมสีให้เหมือน background */}
+                              <TooltipArrow className="fill-btn-hover" />
+                            </TooltipContent>
                           )}
-                        >
-                          <a href={item.url}>
-                            <item.icon className="!w-6 !h-6 shrink-0" />
-                            {open && (
-                              <span className="text-base ml-2 truncate">
-                                {item.title}
-                              </span>
-                            )}
-                          </a>
-                        </SidebarMenuButton>
+                        </Tooltip>
                       </SidebarMenuItem>
                     )}
                   </React.Fragment>

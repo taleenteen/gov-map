@@ -1,5 +1,14 @@
-import React from "react";
-import { X, MapPin, Home, User, FileText, Star } from "lucide-react";
+import React, { useState } from "react";
+import {
+  X,
+  MapPin,
+  Home,
+  User,
+  FileText,
+  Star,
+  ChevronDown,
+  ChevronUp,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface TaxCardProps {
@@ -18,8 +27,10 @@ interface TaxCardProps {
 }
 
 export default function TaxCard({ data, onClose }: TaxCardProps) {
+  const [isExpanded, setIsExpanded] = useState(false);
+
   return (
-    <div className="w-[350px] bg-white rounded-xl overflow-hidden shadow-xl font-sans">
+    <div className="w-[350px] bg-white rounded-xl overflow-hidden shadow-xl font-sans transition-all duration-300 ease-in-out">
       {/* Header */}
       <div className="bg-[#475569] text-white p-3 flex justify-between items-center">
         <h3 className="font-semibold text-lg">รายละเอียดทรัพย์สิน</h3>
@@ -81,36 +92,57 @@ export default function TaxCard({ data, onClose }: TaxCardProps) {
           </div>
         </div>
 
-        {/* Action Buttons */}
-        <div className="space-y-2">
-          <Button className="w-full bg-[#198754] hover:bg-[#157347] text-white h-9">
-            ดูประวัติการชำระ
-          </Button>
-          <Button className="w-full bg-[#1e3a8a] hover:bg-[#1e40af] text-white h-9">
-            ส่งหนังสือแจ้งเตือน
-          </Button>
-          <Button className="w-full bg-[#dc2626] hover:bg-[#b91c1c] text-white h-9">
-            ดำเนินการทางกฎหมาย
-          </Button>
-        </div>
+        {/* Toggle Button */}
+        <button
+          onClick={() => setIsExpanded(!isExpanded)}
+          className="w-full flex items-center justify-center gap-2 text-sm text-blue-600 hover:text-blue-800 font-medium py-2 transition-colors"
+        >
+          {isExpanded ? (
+            <>
+              ซ่อนรายละเอียดเพิ่มเติม <ChevronUp size={16} />
+            </>
+          ) : (
+            <>
+              ดูรายละเอียดเพิ่มเติม <ChevronDown size={16} />
+            </>
+          )}
+        </button>
 
-        <hr className="border-gray-200" />
+        {/* Collapsible Content */}
+        {isExpanded && (
+          <div className="space-y-4 animate-in slide-in-from-top-2 duration-200">
+            {/* Action Buttons */}
+            <div className="space-y-2">
+              <Button className="w-full bg-[#198754] hover:bg-[#157347] text-white h-9">
+                ดูประวัติการชำระ
+              </Button>
+              <Button className="w-full bg-[#1e3a8a] hover:bg-[#1e40af] text-white h-9">
+                ส่งหนังสือแจ้งเตือน
+              </Button>
+              <Button className="w-full bg-[#dc2626] hover:bg-[#b91c1c] text-white h-9">
+                ดำเนินการทางกฎหมาย
+              </Button>
+            </div>
 
-        {/* Footer: Risk Level */}
-        <div className="flex justify-between items-center">
-          <div>
-            <h4 className="font-semibold text-gray-900">ข้อมูลเพิ่มเติม</h4>
-            <p className="text-sm text-gray-600">ระดับความเสี่ยง</p>
+            <hr className="border-gray-200" />
+
+            {/* Footer: Risk Level */}
+            <div className="flex justify-between items-center">
+              <div>
+                <h4 className="font-semibold text-gray-900">ข้อมูลเพิ่มเติม</h4>
+                <p className="text-sm text-gray-600">ระดับความเสี่ยง</p>
+              </div>
+              <div className="flex gap-1">
+                {[1, 2, 3, 4, 5].map((i) => (
+                  <Star
+                    key={i}
+                    className="w-5 h-5 text-yellow-400 fill-yellow-400"
+                  />
+                ))}
+              </div>
+            </div>
           </div>
-          <div className="flex gap-1">
-            {[1, 2, 3, 4, 5].map((i) => (
-              <Star
-                key={i}
-                className="w-5 h-5 text-yellow-400 fill-yellow-400"
-              />
-            ))}
-          </div>
-        </div>
+        )}
       </div>
     </div>
   );

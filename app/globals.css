@@ -60,11 +60,13 @@
   --font-sans: var(--font-inter);
   --font-mono: var(--font-kanit);
 
-  --color-icon-default: var(--color-icon-default);
+  --color-icon-default: var(--color-icon-color-default);
   --color-btn-primary: var(--color-btn-primary);
   --color-btn-hover: var(--color-btn-hover);
-  --color-critical: var(--color-critical);
-  --color-warning: var(--color-warning);
+  --color-critical: var(--color-alias-semantic-critical);
+  --color-warning: var(--color-alias-semantic-warning);
+  --color-security: var(--color-icon-color-security);
+  --color-secondary-text: var(--color-alias-text-colors-secondary);
 
   --color-brand-primary: var(--color-alias-color-brand-primary);
 
