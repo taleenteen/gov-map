@@ -24,7 +24,9 @@ import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import Logo from "@/assets/brand/logo-full.png";
+import { useRouter } from "next/navigation";
 
+// const router = useRouter(); // Removed invalid hook call
 // --- 1. MOCK DATA (ในไฟล์ตามขอ) ---
 
 // การ์ดใหญ่ 2 ใบด้านบน
@@ -53,6 +55,7 @@ const standardServices = [
     icon: Map,
     color: "text-cyan-500",
     bgColor: "bg-cyan-50",
+    path: "/user-feature/tax",
   },
   {
     id: 4,
@@ -219,12 +222,14 @@ function ServiceCard({
   iconSize?: string;
   textSize?: string;
 }) {
+  const router = useRouter();
   return (
     <Card
       className={cn(
         "border-none shadow-[0_2px_10px_-2px_rgba(0,0,0,0.05)] hover:shadow-lg transition-all duration-300 cursor-pointer rounded-3xl bg-white group",
         className
       )}
+      onClick={() => item.path && router.push(item.path)}
     >
       <CardContent className="p-6 flex flex-col items-start gap-4 w-full h-full">
         {/* Icon Circle */}

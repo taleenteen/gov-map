@@ -157,7 +157,7 @@ export function AppSidebar({ extraGroups = [], ...props }: AppSidebarProps) {
                                 >
                                   {item.title}
                                   {/* ✅ ใส่ Arrow และเติมสีให้เหมือน background */}
-                                  <TooltipArrow className="fill-btn-hover" />
+                                  <TooltipArrow className="bg-btn-hover fill-btn-hover text-black" />
                                 </TooltipContent>
                               )}
                             </Tooltip>
@@ -214,11 +214,11 @@ export function AppSidebar({ extraGroups = [], ...props }: AppSidebarProps) {
                           {!open && (
                             <TooltipContent
                               side="right"
-                              className="bg-btn-hover text-white border-none"
+                              className="bg-btn-hover fill-btn-hover text-black border-none"
                             >
                               {item.title}
                               {/* ✅ ใส่ Arrow และเติมสีให้เหมือน background */}
-                              <TooltipArrow className="fill-btn-hover" />
+                              <TooltipArrow className="fill-btn-hover text-black" />
                             </TooltipContent>
                           )}
                         </Tooltip>
