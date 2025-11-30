@@ -4,14 +4,22 @@ import TaxCard from "@/components/features/cards/TaxCard";
 import WaterCard from "@/components/features/cards/WaterCard";
 import FireCard from "@/components/features/cards/FireCard";
 import CameraCard from "@/components/features/cards/CameraCard";
-import { Pin } from "@/data/map-pins";
+import { Pin } from "@/types/map";
+import { PinType } from "@/types/api";
 
 interface MapPopupProps {
-  popupInfo: Pin;
+  popupInfo: any; // Using any to accommodate both legacy Pin and new ApiPin structure with attributes
   onClose: () => void;
 }
 
 export default function MapPopup({ popupInfo, onClose }: MapPopupProps) {
+  // Helper to safely get attribute values
+  const getAttr = (key: string, defaultValue: any = "") => {
+    return popupInfo[key] || defaultValue;
+  };
+
+  const type = popupInfo.type?.toUpperCase();
+
   return (
     <Popup
       anchor="top"
@@ -19,12 +27,13 @@ export default function MapPopup({ popupInfo, onClose }: MapPopupProps) {
       longitude={popupInfo.lng}
       onClose={onClose}
       closeButton={false}
+      closeOnClick={false}
       className="custom-popup z-50 p-0"
       maxWidth="450px"
       offset={1}
     >
       {/* Card 1: Water */}
-      {popupInfo.type === "water" && (
+      {type === PinType.WATER && (
         <WaterCard
           data={{
             id: popupInfo.id,
@@ -34,74 +43,83 @@ export default function MapPopup({ popupInfo, onClose }: MapPopupProps) {
             systemName:
               "ระบบตรวจสอบปริมาณและคุณภาพน้ำ (Smart Water Monitoring)",
             measurements: [
-              { label: "pH", value: "7.2 (อยู่ในเกณฑ์ปกติ)", isNormal: true },
-              { label: "ความขุ่น", value: "8 NTU", isNormal: true },
-              { label: "อุณหภูมิ", value: "29.4°C", isNormal: true },
               {
-                label: "DO (ออกซิเจนละลายน้ำ)",
-                value: "6.5 mg/L",
+                label: "pH",
+                value: getAttr("ph")
+                  ? `${getAttr("ph")} (อยู่ในเกณฑ์ปกติ)`
+                  : "N/A",
                 isNormal: true,
               },
-              { label: "คลอรีนอิสระ", value: "0.4 mg/L", isNormal: true },
-              { label: "สี/กลิ่น", value: "ปกติ", isNormal: true },
+              {
+                label: "ความขุ่น",
+                value: getAttr("turbidity")
+                  ? `${getAttr("turbidity")} NTU`
+                  : "N/A",
+                isNormal: true,
+              },
+              {
+                label: "DO (ออกซิเจนละลายน้ำ)",
+                value: getAttr("do") ? `${getAttr("do")} mg/L` : "N/A",
+                isNormal: true,
+              },
+              {
+                label: "ปริมาณน้ำ",
+                value: getAttr("water_level") || "N/A",
+                isNormal: true,
+              },
+              {
+                label: "เซ็นเซอร์น้ำ",
+                value: getAttr("water_sensor") || "ปกติ",
+                isNormal: true,
+              },
             ],
-            summary:
-              popupInfo.status === "Danger"
-                ? "สถานะรวม: น้ำอยู่ในเกณฑ์อันตราย — ไม่ควรนำไปใช้งาน"
-                : popupInfo.status === "Warning"
-                ? "สถานะรวม: น้ำอยู่ในเกณฑ์เฝ้าระวัง — ควรตรวจสอบก่อนใช้งาน"
-                : "สถานะรวม: น้ำอยู่ในเกณฑ์ดี — พร้อมใช้งานตามมาตรฐาน",
-            summaryStatus:
-              popupInfo.status === "Danger"
-                ? "Bad"
-                : popupInfo.status === "Warning"
-                ? "Bad" // Or add a Warning status to WaterCard if supported, otherwise Bad is red
-                : "Good",
+            summary: "สถานะรวม: น้ำอยู่ในเกณฑ์ดี — พร้อมใช้งานตามมาตรฐาน",
+            summaryStatus: "Good",
           }}
           onClose={onClose}
         />
       )}
 
       {/* Card 2: Fire */}
-      {popupInfo.type === "fire" && (
+      {type === PinType.FIRE && (
         <FireCard
           data={{
             title: popupInfo.title,
-            temp: popupInfo.temp,
-            alert: popupInfo.alert,
+            temp: getAttr("temp", "N/A"),
+            alert: getAttr("alert", "Normal"),
           }}
           onClose={onClose}
         />
       )}
 
       {/* Card 3: Camera */}
-      {popupInfo.type === "camera" && (
+      {type === PinType.CAMERA && (
         <CameraCard
           data={{
             title: popupInfo.title,
-            viewers: popupInfo.viewers,
-            status: popupInfo.status,
-            location: popupInfo.location,
-            time: popupInfo.time,
-            alertMessage: popupInfo.alertMessage,
+            viewers: parseInt(getAttr("viewers", "0")),
+            status: popupInfo.status || "Online",
+            location: getAttr("location", "Unknown"),
+            time: getAttr("time", "Now"),
+            alertMessage: getAttr("alertMessage"),
           }}
           onClose={onClose}
         />
       )}
 
       {/* Card 4: Tax */}
-      {popupInfo.type === "tax" && (
+      {type === PinType.TAX && (
         <TaxCard
           data={{
-            id: "TX-2568-009123", // Mock ID from image
-            propertyId: popupInfo.propertyId || "",
-            propertyType: popupInfo.propertyType || "",
-            owner: popupInfo.owner || "",
-            address: popupInfo.address || "",
-            appraisalValue: popupInfo.appraisalValue || "",
-            taxStatus: popupInfo.taxStatus as any,
-            taxAmount: popupInfo.taxAmount || "",
-            dueDate: popupInfo.dueDate || "",
+            id: getAttr("dataId", "TX-XXXX-XXXXXX"),
+            propertyId: getAttr("propertyId"),
+            propertyType: getAttr("propertyType"),
+            owner: getAttr("owner"),
+            address: getAttr("address"),
+            appraisalValue: getAttr("appraisalValue"),
+            taxStatus: getAttr("taxStatus", "Paid"),
+            taxAmount: getAttr("taxAmount"),
+            dueDate: getAttr("dueDate"),
           }}
           onClose={onClose}
         />

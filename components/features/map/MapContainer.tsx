@@ -1,13 +1,29 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useEffect } from "react";
 import { MapRef } from "react-map-gl/mapbox";
 import { MapTools } from "@/components/features/map/MapTools";
 import SmartCityMap from "@/components/features/map/SmartCityMap";
+import { useMapStore } from "@/stores/useMapStore";
 
-export function MapContainer() {
+interface MapContainerProps {
+  canCreatePin?: boolean;
+}
+
+export function MapContainer({ canCreatePin = false }: MapContainerProps) {
   const mapRef = useRef<MapRef>(null);
-  const [currentLayer, setCurrentLayer] = useState<string | null>("water");
+
+  // Use Zustand store
+  const activeLayer = useMapStore((state) => state.activeLayer);
+  const isCreatePinMode = useMapStore((state) => state.isCreatePinMode);
+  const { setActiveLayer, toggleCreatePinMode, reset } = useMapStore(
+    (state) => state.actions
+  );
+
+  // Reset store on unmount
+  useEffect(() => {
+    return () => reset();
+  }, [reset]);
 
   const handleZoomIn = () => {
     mapRef.current?.zoomIn();
@@ -23,21 +39,31 @@ export function MapContainer() {
       zoom: 13.5,
       duration: 2000,
     });
-    setCurrentLayer("");
+    reset();
+  };
+
+  const handleCreatePin = () => {
+    if (canCreatePin) {
+      toggleCreatePinMode();
+      // Logic for entering create pin mode (e.g. change cursor) can be handled here or in SmartCityMap via store
+      console.log("Toggled Create Pin Mode");
+    }
   };
 
   return (
     <div className="relative w-full h-full bg-gray-100">
       <div className="absolute inset-0 z-0">
-        <SmartCityMap activeLayer={currentLayer} mapRef={mapRef} />
+        <SmartCityMap activeLayer={activeLayer} mapRef={mapRef} />
       </div>
 
       <MapTools
-        activeLayer={currentLayer}
-        onLayerChange={setCurrentLayer}
+        activeLayer={activeLayer}
+        onLayerChange={setActiveLayer}
         onZoomIn={handleZoomIn}
         onZoomOut={handleZoomOut}
         onReset={handleReset}
+        onCreatePin={canCreatePin ? handleCreatePin : undefined}
+        isCreatePinMode={isCreatePinMode}
       />
     </div>
   );

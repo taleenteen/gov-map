@@ -1,30 +1,4 @@
-export interface Pin {
-  id: number;
-  lat: number;
-  lng: number;
-  type: "water" | "fire" | "camera" | "tax";
-  title: string;
-  // Water specific
-  level?: string;
-  status?: string;
-  // Fire specific
-  temp?: string;
-  alert?: string;
-  // Camera specific
-  viewers?: number;
-  location?: string;
-  time?: string;
-  alertMessage?: string;
-  // Tax specific
-  propertyId?: string;
-  propertyType?: string;
-  owner?: string;
-  address?: string;
-  appraisalValue?: string;
-  taxStatus?: string;
-  taxAmount?: string;
-  dueDate?: string;
-}
+import { Pin } from "@/types/map";
 
 export const urgentPins: Pin[] = [
   {
@@ -90,5 +64,23 @@ export const urgentPins: Pin[] = [
     taxStatus: "ชำระแล้ว",
     taxAmount: "฿12,500",
     dueDate: "05 พ.ย. 2568",
+  },
+  {
+    id: 7,
+    lat: 13.72,
+    lng: 100.56,
+    type: "info",
+    subtype: "groundwater",
+    title: "บ่อบาดาลชุมชน",
+    label: "บ่อบาดาล",
+  },
+  {
+    id: 8,
+    lat: 13.73,
+    lng: 100.57,
+    type: "info",
+    subtype: "pond",
+    title: "บ่อน้ำสาธารณะ",
+    label: "บ่อน้ำ",
   },
 ];

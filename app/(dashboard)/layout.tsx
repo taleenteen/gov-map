@@ -3,6 +3,7 @@ import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/features/app-sidebar";
 import { BarChart3, Edit3, FileText, SquareKanban } from "lucide-react";
 import { LucideIcon } from "lucide-react";
+import RoleGuard from "@/components/features/auth/RoleGuard";
 
 export interface NavItem {
   title: string;
@@ -45,21 +46,23 @@ export default function DashboardLayout({
   ];
 
   return (
-    <SidebarProvider
-      style={
-        {
-          "--sidebar-width": "16rem",
-          "--sidebar-width-icon": "5rem",
-        } as React.CSSProperties
-      }
-    >
-      <AppSidebar extraGroups={dashboardMenus} />
+    <RoleGuard>
+      <SidebarProvider
+        style={
+          {
+            "--sidebar-width": "16rem",
+            "--sidebar-width-icon": "5rem",
+          } as React.CSSProperties
+        }
+      >
+        <AppSidebar extraGroups={dashboardMenus} />
 
-      <SidebarInset>
-        <main className="flex-1 flex flex-col h-screen overflow-hidden bg-gray-50">
-          {children}
-        </main>
-      </SidebarInset>
-    </SidebarProvider>
+        <SidebarInset>
+          <main className="flex-1 flex flex-col h-screen overflow-hidden bg-gray-50">
+            {children}
+          </main>
+        </SidebarInset>
+      </SidebarProvider>
+    </RoleGuard>
   );
 }

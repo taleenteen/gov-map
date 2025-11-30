@@ -10,8 +10,7 @@ import Map, {
 } from "react-map-gl/mapbox";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { zonesGeoJson } from "@/data/mock-map-data";
-import { PinService } from "@/services/pin.service";
-import { ApiPin, PinType } from "@/types/api";
+import { urgentPins } from "@/data/map-pins";
 import { Pin } from "@/types/map";
 import MapPopup from "./MapPopup";
 import { generatePinImage, ICONS } from "@/utils/map-style-utils";
@@ -33,115 +32,38 @@ export default function SmartCityMap({
     longitude: 100.515,
     zoom: 13.5,
   });
-  const [pins, setPins] = useState<ApiPin[]>([]);
-
-  React.useEffect(() => {
-    const fetchPins = async () => {
-      try {
-        const data = await PinService.getAll();
-        setPins(data);
-      } catch (error) {
-        console.error("Failed to fetch pins:", error);
-      }
-    };
-    fetchPins();
-  }, []);
 
   // Filter pins based on activeLayer
   const filteredPins = activeLayer
-    ? pins.filter((pin) => pin.type.toLowerCase() === activeLayer.toLowerCase())
-    : pins;
+    ? urgentPins.filter((pin) => pin.type === activeLayer)
+    : urgentPins;
 
-  // Separate pins into points and zones
-  const pointPins = filteredPins.filter(
-    (pin) => !pin.geometry || pin.geometry.type === "POINT"
-  );
-  const zonePins = filteredPins.filter(
-    (pin) => pin.geometry?.type === "LINESTRING"
-  );
-
-  const pointsGeoJson = {
+  const pinsGeoJson = {
     type: "FeatureCollection",
-    features: pointPins.map((pin) => {
-      // Determine icon based on type
-      let icon = "pin-water";
-      switch (pin.type) {
-        case PinType.WATER:
-          icon = "pin-water";
-          break;
-        case PinType.FIRE:
-          icon = "pin-fire";
-          break;
-        case PinType.CAMERA:
-          icon = "pin-camera";
-          break;
-        case PinType.TAX:
-          icon = "pin-tax";
-          break;
-        case PinType.INFRASTRUCTURE:
-          icon = "pin-groundwater";
-          break;
-        default:
-          icon = "pin-water";
-      }
-
-      // Handle geometry (support both legacy lat/lng and GeoJSON)
-      let coordinates = [100.515, 13.715]; // Default
-      if (
-        pin.geometry &&
-        typeof pin.geometry.coordinates === "object" &&
-        Array.isArray(pin.geometry.coordinates)
-      ) {
-        coordinates = pin.geometry.coordinates as number[];
-      } else if (pin.geometry?.lng && pin.geometry?.lat) {
-        coordinates = [pin.geometry.lng, pin.geometry.lat];
-      }
-
-      return {
-        type: "Feature",
-        properties: {
-          id: pin.id,
-          title: pin.title,
-          description: pin.description,
-          type: pin.type,
-          subtype: pin.subtype,
-          status: pin.status,
-          updatedAt: pin.updatedAt,
-          lat: coordinates[1],
-          lng: coordinates[0],
-          // Helper property for icon-image expression
-          icon,
-          // Map attributes to display properties if needed
-          ...pin.attributes,
-        },
-        geometry: {
-          type: "Point",
-          coordinates,
-        },
-      };
-    }),
-  };
-
-  const zonesDataGeoJson = {
-    type: "FeatureCollection",
-    features: zonePins.map((pin) => ({
+    features: filteredPins.map((pin) => ({
       type: "Feature",
       properties: {
-        id: pin.id,
-        title: pin.title,
-        description: pin.description,
-        type: pin.type,
-        status: pin.status,
-        ...pin.attributes,
+        ...pin,
+        // Helper property for icon-image expression
+        icon:
+          pin.type === "water"
+            ? "pin-water"
+            : pin.type === "fire"
+            ? "pin-fire"
+            : pin.type === "camera"
+            ? "pin-camera"
+            : pin.type === "tax"
+            ? "pin-tax"
+            : pin.subtype === "pond"
+            ? "pin-pond"
+            : "pin-groundwater",
       },
       geometry: {
-        type: "LineString",
-        coordinates: pin.geometry?.coordinates || [],
+        type: "Point",
+        coordinates: [pin.lng, pin.lat],
       },
     })),
   };
-
-  const [cursor, setCursor] = useState<string>("auto");
 
   const onMapLoad = useCallback((e: any) => {
     const map = e.target;
@@ -154,15 +76,9 @@ export default function SmartCityMap({
     generatePinImage(map, "pin-groundwater", "#0891b2", ICONS.cylinder, 0.75); // Smaller scale
   }, []);
 
-  const onMouseEnter = useCallback(() => setCursor("pointer"), []);
-  const onMouseLeave = useCallback(() => setCursor("auto"), []);
-
   const onClick = (event: MapMouseEvent) => {
     const feature = event.features?.[0];
-    if (!feature) {
-      setPopupInfo(null);
-      return;
-    }
+    if (!feature) return;
 
     const clusterId = feature.properties?.cluster_id;
 
@@ -184,10 +100,7 @@ export default function SmartCityMap({
     } else {
       // Clicked on a pin
       const pin = feature.properties as Pin;
-      // Only set popup for points, not zones/lines for now (unless requested)
-      if (feature.geometry.type === "Point") {
-        setPopupInfo(pin);
-      }
+      setPopupInfo(pin);
     }
   };
 
@@ -213,16 +126,13 @@ export default function SmartCityMap({
         onMove={(evt: ViewStateChangeEvent) => setViewState(evt.viewState)}
         onLoad={onMapLoad}
         onClick={onClick}
-        onMouseEnter={onMouseEnter}
-        onMouseLeave={onMouseLeave}
-        cursor={cursor}
         mapStyle="mapbox://styles/mapbox/satellite-streets-v12"
         mapboxAccessToken={MAPBOX_TOKEN}
         attributionControl={false}
         reuseMaps
         interactiveLayerIds={["clusters", "unclustered-point"]}
       >
-        <Source id="zones-data" type="geojson" data={zonesDataGeoJson as any}>
+        <Source id="zones-data" type="geojson" data={zonesGeoJson as any}>
           <Layer
             id="zone-fills"
             type="fill"
@@ -231,14 +141,14 @@ export default function SmartCityMap({
           <Layer
             id="zone-lines"
             type="line"
-            paint={{ "line-color": "#60a5fa", "line-width": 4 }}
+            paint={{ "line-color": "#60a5fa", "line-width": 2 }}
           />
         </Source>
 
         <Source
           id="pins"
           type="geojson"
-          data={pointsGeoJson as any}
+          data={pinsGeoJson as any}
           cluster={true}
           clusterMaxZoom={14}
           clusterRadius={50}

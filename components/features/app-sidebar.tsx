@@ -126,8 +126,8 @@ export function AppSidebar({ extraGroups = [], ...props }: AppSidebarProps) {
                         <SidebarMenuItem
                           className={cn(!open ? "flex justify-center" : "")}
                         >
-                          <CollapsibleTrigger asChild>
-                            <Tooltip>
+                          <Tooltip>
+                            <CollapsibleTrigger asChild>
                               <TooltipTrigger asChild>
                                 <SidebarMenuButton
                                   // ❌ ลบ prop tooltip ทิ้งไปเลย
@@ -147,21 +147,21 @@ export function AppSidebar({ extraGroups = [], ...props }: AppSidebarProps) {
                                   )}
                                 </SidebarMenuButton>
                               </TooltipTrigger>
+                            </CollapsibleTrigger>
 
-                              {/* 2. Custom Tooltip Content & Arrow ตรงนี้ */}
-                              {/* แสดงเฉพาะตอนปิด Sidebar (!open) เพื่อไม่ให้รก */}
-                              {!open && (
-                                <TooltipContent
-                                  side="right"
-                                  className="bg-btn-hover text-white border-none"
-                                >
-                                  {item.title}
-                                  {/* ✅ ใส่ Arrow และเติมสีให้เหมือน background */}
-                                  <TooltipArrow className="bg-btn-hover fill-btn-hover text-black" />
-                                </TooltipContent>
-                              )}
-                            </Tooltip>
-                          </CollapsibleTrigger>
+                            {/* 2. Custom Tooltip Content & Arrow ตรงนี้ */}
+                            {/* แสดงเฉพาะตอนปิด Sidebar (!open) เพื่อไม่ให้รก */}
+                            {!open && (
+                              <TooltipContent
+                                side="right"
+                                className="bg-btn-hover fill-btn-hover text-black border-none"
+                              >
+                                {item.title}
+                                {/* ✅ ใส่ Arrow และเติมสีให้เหมือน background */}
+                                <TooltipArrow className="text-black" />
+                              </TooltipContent>
+                            )}
+                          </Tooltip>
                           <CollapsibleContent>
                             {open && (
                               <SidebarMenuSub className="ml-0 border-l-0 pl-0 ">

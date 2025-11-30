@@ -1,5 +1,5 @@
-import { AdminMapContainer } from "@/components/features/map/AdminMapContainer";
+import { MapContainer } from "@/components/features/map/MapContainer";
 
 export default function AdminPage() {
-  return <AdminMapContainer />;
+  return <MapContainer canCreatePin={true} />;
 }
