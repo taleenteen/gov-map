@@ -1,104 +1,86 @@
 import React from "react";
-import { Droplet, Zap, X, Check } from "lucide-react";
+import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useSidebar } from "@/components/ui/sidebar";
+import {
+  WaterLevelGauge,
+  TankInfo,
+  WaterVolumeTrend,
+  PumpStatusList,
+} from "@/components/features/water/widgets";
+import WaterLevelCard from "@/components/features/water/widgets/guage";
+import { WaterSystemOverview } from "@/components/features/water/widgets/WaterSystemOverview";
+import { WaterTrendOverview } from "@/components/features/water/widgets/WaterTrendOverview";
+import { WaterQualityOverview } from "@/components/features/water/widgets/WaterQualityOverview";
+import WaterCarGauage from "@/components/features/water/widgets/WaterCarGauage";
 
 export interface WaterCardProps {
-  data: {
-    id: string | number;
-    title: string;
-    status: "Normal" | "Danger" | "Warning";
-    systemName: string;
-    measurements: {
-      label: string;
-      value: string;
-      isNormal: boolean;
-    }[];
-    summary: string;
-    summaryStatus: "Good" | "Bad";
-  };
+  data?: unknown; // Relaxed type for now as we are using widgets with internal mock data
   onClose?: () => void;
 }
 
-export default function WaterCard({ data, onClose }: WaterCardProps) {
-  const isDanger = data.status === "Danger";
-  const isWarning = data.status === "Warning";
+export default function WaterCard({ data: _data, onClose }: WaterCardProps) {
+  const { open } = useSidebar();
+  const [viewMode, setViewMode] = React.useState<
+    "default" | "overview" | "trend-overview" | "quality-overview"
+  >("default");
+
+  // Calculate left position based on sidebar state
+  // Sidebar width is 16rem (256px) when expanded, 3rem (48px) when collapsed
+  // We add some padding/gap
+  const leftPosition = open ? "left-[17rem]" : "left-[4rem]";
 
   return (
-    <div className="w-[443px] max-h-[441px] bg-white rounded-xl overflow-y-auto shadow-xl font-sans p-6 relative scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent">
-      {/* Header */}
-      <div className="flex items-start gap-4 mb-2">
-        <div className="w-14 h-14 bg-[#F0F9FF] rounded-2xl flex items-center justify-center shrink-0">
-          <Droplet className="w-6 h-6 text-[#0EA5E9]" />
-        </div>
-        <div>
-          <span
-            className={`inline-block px-3 py-1 rounded-lg text-sm font-bold mb-2 ${
-              isDanger
-                ? "bg-[#FFE4E6] text-critical"
-                : isWarning
-                ? "bg-yellow-100 text-yellow-600"
-                : "bg-green-100 text-secondary-text"
-            }`}
-          >
-            {isDanger ? "อันตราย" : isWarning ? "เฝ้าระวัง" : "ปกติ"}
-          </span>
-          <h2 className="text-2xl font-medium text-gray-900 leading-tight">
-            {data.title}
-          </h2>
-        </div>
-      </div>
-
-      {/* System Banner */}
-      <div className="bg-[#E0F2FE] rounded-lg py-2 px-3 flex items-center gap-3 mb-2 border border-[#BAE6FD]">
-        <Zap className="w-3 h-3 text-[#2563EB] shrink-0 fill-[#2563EB]" />
-        <span className="text-[#0369A1] text-xs font-medium">
-          {data.systemName}
-        </span>
-      </div>
-
-      {/* Measurements */}
-      <div className="mb-4">
-        <p className="text-sm text-gray-600">ผลตรวจคุณภาพน้ำวันนี้</p>
-        <div className="space-y-0.5">
-          {data.measurements.map((item, index) => (
-            <div key={index} className="flex items-center gap-3 text-gray-700">
-              {item.isNormal ? (
-                <Check className="w-5 h-5 text-green-500 shrink-0" />
-              ) : (
-                <X className="w-5 h-5 text-red-500 shrink-0" />
-              )}
-              <span className="text-xs">
-                {item.label}: {item.value}
-              </span>
+    <div
+      className={`fixed top-4 bottom-4 ${leftPosition} z-40 w-[750px] h-[629px] transition-all duration-200 ease-linear flex flex-col gap-4 pointer-events-none p-1`}
+    >
+      {viewMode === "default" ? (
+        <>
+          {/* Close Button (Floating) */}
+          <div className="grid grid-cols-12 gap-4 pointer-events-auto">
+            {/* Item 1 */}
+            <div className="col-span-12 md:col-span-6 ">
+              {" "}
+              {/* <WaterCarGauage /> */}
+              <WaterLevelCard
+                onViewTrend={() => setViewMode("overview")}
+                onViewQuality={() => setViewMode("quality-overview")}
+              />
             </div>
-          ))}
-        </div>
-      </div>
 
-      {/* Summary Box */}
-      <div
-        className={`rounded-lg py-2 px-3 mb-6 text-center ${
-          data.summaryStatus === "Bad"
-            ? "bg-red-100 text-red-600"
-            : "bg-green-100 text-green-600"
-        }`}
-      >
-        <span className="font-medium">{data.summary}</span>
-      </div>
+            {/* Item 2 */}
+            <div className="col-span-12 md:col-span-6">
+              <TankInfo />
+            </div>
 
-      {/* Footer Buttons */}
-      <div className="flex gap-3">
-        <Button
-          variant="outline"
-          className=" bg-gray-50 border-gray-200 text-gray-700 hover:bg-gray-100 h-9 text-base rounded-2xl"
-          onClick={onClose}
-        >
-          ยกเลิก
-        </Button>
-        <Button className="flex-1 bg-[#198754] hover:bg-[#157347] text-white h-9 text-base rounded-2xl">
-          ดูทั้งหมด
-        </Button>
-      </div>
+            {/* Item 3 */}
+            <div className="col-span-12">
+              <WaterVolumeTrend
+                onViewDetails={() => setViewMode("trend-overview")}
+              />
+            </div>
+            <div className="col-span-12">
+              <PumpStatusList />
+            </div>
+            {/* <div className="col-span-12 md:col-span-6 bg-blue-200 p-4">Box 1</div>
+        <div className="col-span-12 md:col-span-6 bg-green-200 p-4">Box 2</div> */}
+          </div>
+          <Button
+            variant="secondary"
+            size="icon"
+            className="absolute -top-2 -right-2 rounded-full shadow-md bg-white hover:bg-gray-100 pointer-events-auto"
+            onClick={onClose}
+          >
+            <X className="w-4 h-4" />
+          </Button>
+        </>
+      ) : viewMode === "overview" ? (
+        <WaterSystemOverview onBack={() => setViewMode("default")} />
+      ) : viewMode === "trend-overview" ? (
+        <WaterTrendOverview onBack={() => setViewMode("default")} />
+      ) : (
+        <WaterQualityOverview onBack={() => setViewMode("default")} />
+      )}
     </div>
   );
 }

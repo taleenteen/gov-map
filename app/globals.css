@@ -141,6 +141,9 @@
   --chart-3: oklch(0.398 0.07 227.392);
   --chart-4: oklch(0.828 0.189 84.429);
   --chart-5: oklch(0.769 0.188 70.08);
+  --color-text-field-default: var(--color-text-field-default);
+  --color-text-field-default-dark: var(--color-text-field-default-dark);
+  --color-text-field-disable: var(--color-text-field-disable);
 }
 
 @theme {

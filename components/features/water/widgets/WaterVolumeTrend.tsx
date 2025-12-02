@@ -31,9 +31,13 @@ const mockData: DataPoint[] = [
   { time: "21:00", volume: 4200, outflow: 3800 },
 ];
 
-export function WaterVolumeTrend() {
+interface WaterVolumeTrendProps {
+  onViewDetails?: () => void;
+}
+
+export function WaterVolumeTrend({ onViewDetails }: WaterVolumeTrendProps) {
   return (
-    <Card className="w-full h-full shadow-sm border border-gray-100 rounded-3xl overflow-hidden bg-white">
+    <Card className="w-full h-full shadow-sm border border-gray-100 rounded-3xl bg-white p-3">
       <CardHeader className="flex flex-row items-start justify-between pb-2">
         <div className="space-y-1">
           <p className="text-sm text-gray-500">แนวโน้มปริมาณน้ำ</p>
@@ -56,12 +60,13 @@ export function WaterVolumeTrend() {
             variant="secondary"
             size="icon"
             className="rounded-full bg-gray-100 hover:bg-gray-200 h-8 w-8"
+            onClick={onViewDetails}
           >
             <ArrowUpRight className="h-4 w-4 text-gray-500" />
           </Button>
         </div>
       </CardHeader>
-      <CardContent className="h-[300px] w-full pt-4">
+      <CardContent className="h-[150px] w-full px-0">
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart
             data={mockData}

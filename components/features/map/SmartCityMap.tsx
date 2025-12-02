@@ -14,6 +14,7 @@ import { PinService } from "@/services/pin.service";
 import { ApiPin, PinType } from "@/types/api";
 import { Pin } from "@/types/map";
 import MapPopup from "./MapPopup";
+import WaterCard from "@/components/features/cards/WaterCard";
 import { generatePinImage, ICONS } from "@/utils/map-style-utils";
 
 const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
@@ -377,10 +378,19 @@ export default function SmartCityMap({
           />
         </Source>
 
-        {popupInfo && (
-          <MapPopup popupInfo={popupInfo} onClose={() => setPopupInfo(null)} />
-        )}
+        {popupInfo &&
+          (popupInfo.type as string).toUpperCase() !== PinType.WATER && (
+            <MapPopup
+              popupInfo={popupInfo}
+              onClose={() => setPopupInfo(null)}
+            />
+          )}
       </Map>
+
+      {popupInfo &&
+        (popupInfo.type as string).toUpperCase() === PinType.WATER && (
+          <WaterCard data={popupInfo} onClose={() => setPopupInfo(null)} />
+        )}
     </div>
   );
 }

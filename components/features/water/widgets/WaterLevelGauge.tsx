@@ -4,9 +4,9 @@ import { ArrowUpRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface WaterLevelGaugeProps {
-  percentage: number;
-  currentVolume: number;
-  outflowVolume: number;
+  percentage?: number;
+  currentVolume?: number;
+  outflowVolume?: number;
   title?: string;
 }
 

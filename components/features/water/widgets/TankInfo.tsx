@@ -31,14 +31,14 @@ export function TankInfo({
   ];
 
   return (
-    <Card className="w-full h-full shadow-sm border border-gray-100 rounded-3xl overflow-hidden bg-white">
-      <CardHeader className="pb-2">
-        <p className="text-sm text-gray-500">ข้อมูลแท็งก์น้ำ</p>
-        <CardTitle className="text-xl font-bold text-gray-900">
-          รายละเอียดแท็งก์น้ำ
+    <Card className="w-full h-full shadow-sm border border-gray-100 rounded-3xl overflow-hidden bg-white p-2">
+      <CardHeader>
+        <CardTitle className="text-xl font-bold text-gray-900 p-0 pt-3">
+          <p className="text-sm text-gray-500">ข้อมูลแท็งก์น้ำ</p>
+          <p className="text-xl font-bold text-gray-900">รายละเอียดแท็งก์น้ำ</p>
         </CardTitle>
       </CardHeader>
-      <CardContent className="pt-2">
+      <CardContent className="pt-2 px-3">
         <div className="space-y-4">
           {items.map((item, index) => (
             <div
