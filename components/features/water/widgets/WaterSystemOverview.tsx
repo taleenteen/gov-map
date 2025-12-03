@@ -12,7 +12,6 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  Legend,
 } from "recharts";
 
 // --- Reusing Gauge Logic (Simplified for this view) ---
@@ -139,15 +138,25 @@ export function WaterSystemOverview({ onBack }: WaterSystemOverviewProps) {
 
       {/* Chart Section */}
       <Card className="w-full shadow-sm border-none bg-white rounded-2xl p-4">
-        <div className="h-[220px] w-full">
-          <div className="flex justify-between items-center bg-white">
-            <div>
-              <p className="text-sm text-slate-500">ภาพรวมระบบ</p>
-              <h2 className="text-xl font-bold text-slate-900">
-                ปริมาณน้ำของแทงค์ที่เชื่อมโยง
-              </h2>
+        <div className="flex justify-between items-center bg-white mb-2">
+          <div>
+            <p className="text-sm text-slate-500">ภาพรวมระบบ</p>
+            <h2 className="text-xl font-medium text-slate-900">
+              ปริมาณน้ำของแทงค์ที่เชื่อมโยง
+            </h2>
+          </div>
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 rounded-full bg-[#3B82F6]" />
+              <span className="text-sm text-slate-600">ปริมาณน้ำ</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 rounded-full bg-[#F97316]" />
+              <span className="text-sm text-slate-600">ปริมาณน้ำออก</span>
             </div>
           </div>
+        </div>
+        <div className="h-[230px] w-full">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart
               data={chartData}
@@ -179,7 +188,7 @@ export function WaterSystemOverview({ onBack }: WaterSystemOverviewProps) {
                   boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)",
                 }}
               />
-              <Legend iconType="circle" wrapperStyle={{ paddingTop: "20px" }} />
+
               <Bar
                 dataKey="volume"
                 name="ปริมาณน้ำ"
@@ -204,7 +213,7 @@ export function WaterSystemOverview({ onBack }: WaterSystemOverviewProps) {
         <div className="flex justify-between items-center pt-2">
           <div>
             <p className="text-sm text-slate-500">แทงค์ที่เชื่อมโยง</p>
-            <h3 className="text-lg font-bold text-slate-900">
+            <h3 className="text-lg font-medium text-slate-900">
               รายการแท็งก์น้ำทั้งหมด
             </h3>
           </div>
@@ -218,7 +227,7 @@ export function WaterSystemOverview({ onBack }: WaterSystemOverviewProps) {
             >
               <CardContent className="p-4 flex items-center justify-between">
                 <div className="space-y-1">
-                  <h4 className="text-lg font-bold text-slate-900">
+                  <h4 className="text-lg font-medium text-slate-900">
                     {tank.name}
                   </h4>
                   <div className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-0 text-sm">

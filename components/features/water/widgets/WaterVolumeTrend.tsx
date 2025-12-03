@@ -41,7 +41,7 @@ export function WaterVolumeTrend({ onViewDetails }: WaterVolumeTrendProps) {
       <CardHeader className="flex flex-row items-start justify-between pb-2">
         <div className="space-y-1">
           <p className="text-sm text-gray-500">แนวโน้มปริมาณน้ำ</p>
-          <CardTitle className="text-xl font-bold text-gray-900">
+          <CardTitle className="text-xl font-medium text-gray-900">
             หมุดปริมาณน้ำ 1
           </CardTitle>
         </div>

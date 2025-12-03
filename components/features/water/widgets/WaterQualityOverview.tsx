@@ -317,15 +317,15 @@ export function WaterQualityOverview({ onBack }: WaterQualityOverviewProps) {
   };
 
   return (
-    <div className="w-full h-full pointer-events-auto bg-transparent p-4 rounded-xl">
+    <div className="w-full h-full pointer-events-auto bg-transparent p-0 rounded-xl">
       <div className="grid grid-cols-12 gap-4">
         {/* Top Left: Gauge Card */}
         <div className="col-span-12 md:col-span-6">
-          <Card className="h-full shadow-sm border-none bg-white rounded-3xl overflow-hidden">
-            <CardHeader className="flex flex-row items-start justify-between pb-2">
+          <Card className="h-full shadow-sm border-none bg-white rounded-3xl overflow-hidden p-0 pb-3">
+            <CardHeader className="flex flex-row items-start justify-between p-3 pt-6">
               <div>
                 <p className="text-sm text-slate-400 font-medium">คุณภาพน้ำ</p>
-                <CardTitle className="text-xl font-bold text-slate-800">
+                <CardTitle className="text-xl font-medium text-slate-800">
                   หมุดคุณภาพน้ำ 1
                 </CardTitle>
               </div>
@@ -333,7 +333,7 @@ export function WaterQualityOverview({ onBack }: WaterQualityOverviewProps) {
                 <ArrowUpRight className="w-5 h-5 text-slate-500" />
               </div>
             </CardHeader>
-            <CardContent className="space-y-6 pt-4 flex flex-col justify-between h-[calc(100%-80px)]">
+            <CardContent className="space-y-6 px-3 pt-4 flex flex-col justify-between h-[calc(100%-80px)]">
               <PHGauge phValue={7.0} />
               <Button
                 className="w-full bg-btn-primary hover:bg-[#186343] text-text-field-default rounded-xl py-5 px-8 text-sm mt-3"
@@ -350,7 +350,7 @@ export function WaterQualityOverview({ onBack }: WaterQualityOverviewProps) {
           <Card className="h-full shadow-sm border-none bg-white rounded-3xl p-6">
             <div className="mb-6">
               <p className="text-sm text-slate-500">ข้อมูลคุณภาพน้ำ</p>
-              <h3 className="text-lg font-bold text-slate-900">
+              <h3 className="text-lg font-medium text-slate-900">
                 รายละเอียดจุดวัดคุณภาพน้ำ
               </h3>
             </div>
@@ -391,7 +391,7 @@ export function WaterQualityOverview({ onBack }: WaterQualityOverviewProps) {
             <div className="flex justify-between items-center mb-6">
               <div>
                 <p className="text-sm text-slate-500">แนวโน้มคุณภาพน้ำ</p>
-                <h3 className="text-lg font-bold text-slate-900">
+                <h3 className="text-lg font-medium text-slate-900">
                   หมุดปริมาณน้ำ 1
                 </h3>
               </div>
@@ -487,7 +487,7 @@ export function WaterQualityOverview({ onBack }: WaterQualityOverviewProps) {
           <Card className="shadow-sm border-none bg-white rounded-3xl p-6">
             <div className="mb-4">
               <p className="text-sm text-slate-500">แนวโน้มคุณภาพน้ำ</p>
-              <h3 className="text-lg font-bold text-slate-900">
+              <h3 className="text-lg font-medium text-slate-900">
                 สถิติค่าที่ตรวจพบ
               </h3>
             </div>

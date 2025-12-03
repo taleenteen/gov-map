@@ -82,7 +82,7 @@ export function PumpStatusList({
               <Card className="shadow-sm border border-gray-100 rounded-3xl overflow-hidden bg-white h-full py-0">
                 <CardContent className="p-6 flex flex-col justify-between h-full">
                   <div className="flex justify-between items-start">
-                    <h3 className="text-xl font-bold text-gray-900">
+                    <h3 className="text-xl font-medium text-gray-900">
                       {pump.name}
                     </h3>
                     <Switch
@@ -92,7 +92,7 @@ export function PumpStatusList({
                     />
                   </div>
 
-                  <div className="space-y-4 mt-4">
+                  <div className="space-y-2 mt-2">
                     <div className="flex items-center gap-2">
                       <span className="text-gray-500 text-sm">สถานะ:</span>
                       <span

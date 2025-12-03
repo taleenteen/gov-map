@@ -88,7 +88,7 @@ export default function WaterLevelCard({
       <CardHeader className="flex flex-row items-start justify-between pb-2">
         <div>
           <p className="text-sm text-slate-400 font-medium">ปริมาณน้ำ</p>
-          <CardTitle className="text-xl font-bold text-slate-800">
+          <CardTitle className="text-xl font-medium text-slate-800">
             หมุดปริมาณน้ำ 1
           </CardTitle>
         </div>

@@ -110,7 +110,7 @@ export function WaterTrendOverview({ onBack }: WaterTrendOverviewProps) {
         <div className="flex justify-between items-center">
           <div>
             <p className="text-sm text-slate-500">แนวโน้มปริมาณน้ำ</p>
-            <h2 className="text-xl font-bold text-slate-900">
+            <h2 className="text-xl font-medium text-slate-900">
               หมุดปริมาณน้ำ 1
             </h2>
           </div>
@@ -238,7 +238,7 @@ export function WaterTrendOverview({ onBack }: WaterTrendOverviewProps) {
         <div className="flex justify-between items-center mb-4">
           <div>
             <p className="text-sm text-slate-500">แนวโน้มการใช้น้ำ</p>
-            <h3 className="text-lg font-bold text-slate-900">
+            <h3 className="text-lg font-medium text-slate-900">
               เปรียบเทียบการใช้น้ำรายเดือน
             </h3>
           </div>
@@ -307,7 +307,7 @@ export function WaterTrendOverview({ onBack }: WaterTrendOverviewProps) {
       <Card className="w-full shadow-sm border-none bg-white rounded-2xl p-4">
         <div className="mb-4">
           <p className="text-sm text-slate-500">แนวโน้มปริมาณน้ำ</p>
-          <h3 className="text-lg font-bold text-slate-900">
+          <h3 className="text-lg font-medium text-slate-900">
             คาดการณ์การเพียงพอของน้ำ
           </h3>
         </div>

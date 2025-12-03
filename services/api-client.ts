@@ -1,4 +1,8 @@
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+const isServer = typeof window === "undefined";
+
+const BASE_URL = isServer
+  ? "http://app:3000"
+  : process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
 
 interface RequestOptions extends RequestInit {
   params?: Record<string, string>;
